@@ -70,4 +70,9 @@ public class Money {
     public int hashCode() {
         return Objects.hash(value);
     }
+
+    @Override
+    public String toString() {
+        return value.setScale(2, RoundingMode.HALF_UP).toString();
+    }
 }
