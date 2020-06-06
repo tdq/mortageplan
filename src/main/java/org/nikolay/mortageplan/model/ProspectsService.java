@@ -10,5 +10,5 @@ public interface ProspectsService {
     List<ProspectDTO> getAllProspects();
 
     @NonNull
-    Optional<ProspectDTO> findProspectByCustomer(@NonNull String customer);
+    Optional<ProspectDTO> findProspectByCustomer(@NonNull final String customer);
 }

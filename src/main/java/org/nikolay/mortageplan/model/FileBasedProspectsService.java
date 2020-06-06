@@ -1,8 +1,8 @@
 package org.nikolay.mortageplan.model;
 
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -10,15 +10,15 @@ import java.util.Optional;
 @Service
 class FileBasedProspectsService implements ProspectsService {
 
-    @Nonnull
+    @NonNull
     @Override
     public List<ProspectDTO> getAllProspects() {
         return Collections.emptyList();
     }
 
-    @Nonnull
+    @NonNull
     @Override
-    public Optional<ProspectDTO> findProspectByCustomer(@Nonnull String customer) {
+    public Optional<ProspectDTO> findProspectByCustomer(@NonNull String customer) {
         return Optional.empty();
     }
 }

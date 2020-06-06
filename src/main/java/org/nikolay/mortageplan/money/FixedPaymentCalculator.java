@@ -1,8 +1,6 @@
-package org.nikolay.mortageplan.util;
+package org.nikolay.mortageplan.money;
 
 import org.springframework.lang.NonNull;
-
-import java.math.BigDecimal;
 import java.util.Objects;
 
 public class FixedPaymentCalculator {
@@ -19,7 +17,8 @@ public class FixedPaymentCalculator {
      *
      * @return
      */
-    public static BigDecimal calculateFixedPayment(@NonNull BigDecimal totalLoan, int numberOfPayments, @NonNull BigDecimal interestPerPayment) {
+    @NonNull
+    public static Money calculateFixedPayment(@NonNull final Money totalLoan, int numberOfPayments, @NonNull final Money interestPerPayment) {
         Objects.requireNonNull(totalLoan, "total loan can't be null");
         Objects.requireNonNull(interestPerPayment, "interest can't be null");
 
@@ -27,13 +26,12 @@ public class FixedPaymentCalculator {
             throw new IllegalArgumentException("Number of payments can't be less than " + MINIMUM_PAYMENTS_AMOUNT);
         }
 
-        if(BigDecimal.ZERO.equals(interestPerPayment)) {
-            return totalLoan.divide(BigDecimal.valueOf(numberOfPayments));
+        if(Money.ZERO.equals(interestPerPayment)) {
+            return totalLoan.div(new Money(numberOfPayments));
         }
 
-        // TODO get rid of java.Math
-        BigDecimal coefficient = interestPerPayment.add(BigDecimal.ONE).pow(numberOfPayments);
+        final Money coefficient = interestPerPayment.add(Money.ONE).pow(numberOfPayments);
 
-        return totalLoan.multiply(interestPerPayment.multiply(coefficient)).divide(coefficient.subtract(BigDecimal.ONE));
+        return totalLoan.mul(interestPerPayment.mul(coefficient)).div(coefficient.sub(Money.ONE));
     }
 }

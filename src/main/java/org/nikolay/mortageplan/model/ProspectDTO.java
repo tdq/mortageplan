@@ -1,11 +1,14 @@
 package org.nikolay.mortageplan.model;
 
-import java.math.BigDecimal;
+import org.nikolay.mortageplan.money.Money;
+import org.springframework.lang.NonNull;
+
+import java.util.Objects;
 
 public class ProspectDTO {
     private String customer;
-    private BigDecimal totalLoan;
-    private BigDecimal interest;
+    private Money totalLoan = Money.ZERO;
+    private double interest;
     private int years;
 
     public String getCustomer() {
@@ -16,19 +19,20 @@ public class ProspectDTO {
         this.customer = customer;
     }
 
-    public BigDecimal getTotalLoan() {
+    @NonNull
+    public Money getTotalLoan() {
         return totalLoan;
     }
 
-    public void setTotalLoan(BigDecimal totalLoan) {
-        this.totalLoan = totalLoan;
+    public void setTotalLoan(@NonNull Money totalLoan) {
+        this.totalLoan = Objects.requireNonNull(totalLoan);
     }
 
-    public BigDecimal getInterest() {
+    public double getInterest() {
         return interest;
     }
 
-    public void setInterest(BigDecimal interest) {
+    public void setInterest(double interest) {
         this.interest = interest;
     }
 
