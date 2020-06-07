@@ -2,60 +2,91 @@ package org.nikolay.mortageplan.money;
 
 import org.springframework.lang.NonNull;
 
-// TODO get rid of java.Math
 import java.util.Objects;
 
+/**
+ * Money class represents decimal with fixed float point.
+ * Link: https://habr.com/en/company/xakep/blog/257897/
+ */
 public final class Money {
 
-    private static final double MULTIPLIER = 10000;
+    private static final long MULTIPLIER = (long) 1e+18;
 
-    private final long value;
+    private final long intValue;
+    private final long floatValue;
 
-    public static final Money ZERO = new Money(0);
-    public static final Money ONE = new Money(1);
+    public static final Money ZERO = new Money(0, 0);
+    public static final Money ONE = new Money(1, 0);
 
     public Money(double value) {
-        this.value = (long) (value * MULTIPLIER);
+        // This looks like magic, but it find maximum int value which is less than double value
+        this.intValue = value < 0 ? (long) (value - 0.5) : (long) value;
+        this.floatValue = (long) ((value - intValue) * MULTIPLIER);
     }
 
     public Money(long value) {
-        this.value = (long) (value * MULTIPLIER);
+        this.intValue = (long) (value * MULTIPLIER);
+        this.floatValue = 0L;
     }
 
-    private Money(long value, boolean raw) {
-        this.value = (long) (value * (raw ? 1 : MULTIPLIER));
+    private Money(long intValue, long floatValue) {
+        this.intValue = intValue;
+        this.floatValue = floatValue;
     }
 
     @NonNull
     Money add(@NonNull Money value) {
         Objects.requireNonNull(value);
 
-        return new Money(this.value + value.value, true);
+        long newIntValue = intValue + value.intValue;
+        long newFloatValue = floatValue + value.floatValue;
+
+        // TODO check that newIntValue < MULTIPLIER
+
+        if(newFloatValue >= MULTIPLIER) {
+            newFloatValue -= MULTIPLIER;
+            ++newIntValue;
+        }
+
+        return new Money(newIntValue, newFloatValue);
     }
 
     @NonNull
     Money sub(@NonNull Money value) {
         Objects.requireNonNull(value);
 
-        return new Money(this.value - value.value, true);
+        long newIntValue = intValue - value.intValue;
+        long newFloatValue;
+
+        if(floatValue >= value.floatValue) {
+            newFloatValue = floatValue - value.floatValue;
+        } else {
+            newFloatValue = MULTIPLIER - value.floatValue + floatValue;
+            --newIntValue;
+        }
+
+        return new Money(newIntValue, newFloatValue);
     }
 
     @NonNull
     Money mul(@NonNull Money value) {
         Objects.requireNonNull(value);
 
-        return new Money((long) (this.value * (value.value / (double) MULTIPLIER)), true);
+        //return new Money((long) (this.value * (value.value / (double) MULTIPLIER)), true);
+        return Money.ONE;
     }
 
     @NonNull
     Money div(@NonNull Money value) {
         Objects.requireNonNull(value);
 
-        return new Money((long) (this.value / (value.value / (double) MULTIPLIER)), true);
+        //return new Money((long) (this.value / (value.value / (double) MULTIPLIER)), true);
+        return Money.ONE;
     }
 
     @NonNull
     Money pow(int n) {
+        /*
         long result = 1;
         long value = (long) (this.value / (double) MULTIPLIER);
 
@@ -64,23 +95,15 @@ public final class Money {
         }
 
         return new Money(result);
-    }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Money)) return false;
-        Money money = (Money) o;
-        return Objects.equals(value, money.value);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(value);
+         */
+        return Money.ONE;
     }
 
     @Override
     public String toString() {
-        return String.valueOf((long)((value / (double) MULTIPLIER + 0.005) * 100) / 100.0);
+        double value = intValue + floatValue / (double) MULTIPLIER;
+
+        return String.valueOf((long)(value * 100 + 0.5) / 100.0);
     }
 }
