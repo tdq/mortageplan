@@ -3,59 +3,67 @@ package org.nikolay.mortageplan.money;
 import org.springframework.lang.NonNull;
 
 // TODO get rid of java.Math
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.Objects;
 
-public class Money {
-    private final BigDecimal value;
+public final class Money {
+
+    private static final double MULTIPLIER = 10000;
+
+    private final long value;
 
     public static final Money ZERO = new Money(0);
     public static final Money ONE = new Money(1);
 
     public Money(double value) {
-        this.value = BigDecimal.valueOf(value);
+        this.value = (long) (value * MULTIPLIER);
     }
 
     public Money(long value) {
-        this.value = BigDecimal.valueOf(value);
+        this.value = (long) (value * MULTIPLIER);
     }
 
-    private Money(BigDecimal value) {
-        this.value = value;
+    private Money(long value, boolean raw) {
+        this.value = (long) (value * (raw ? 1 : MULTIPLIER));
     }
 
     @NonNull
     Money add(@NonNull Money value) {
         Objects.requireNonNull(value);
 
-        return new Money(this.value.add(value.value));
+        return new Money(this.value + value.value, true);
     }
 
     @NonNull
     Money sub(@NonNull Money value) {
         Objects.requireNonNull(value);
 
-        return new Money(this.value.subtract(value.value));
+        return new Money(this.value - value.value, true);
     }
 
     @NonNull
     Money mul(@NonNull Money value) {
         Objects.requireNonNull(value);
 
-        return new Money(this.value.multiply(value.value));
+        return new Money((long) (this.value * (value.value / (double) MULTIPLIER)), true);
     }
 
     @NonNull
     Money div(@NonNull Money value) {
         Objects.requireNonNull(value);
 
-        return new Money(this.value.divide(value.value, 2, RoundingMode.HALF_UP));
+        return new Money((long) (this.value / (value.value / (double) MULTIPLIER)), true);
     }
 
     @NonNull
     Money pow(int n) {
-        return new Money(this.value.pow(n));
+        long result = 1;
+        long value = (long) (this.value / (double) MULTIPLIER);
+
+        for(int i = 0; i < n; ++i) {
+            result *= value;
+        }
+
+        return new Money(result);
     }
 
     @Override
@@ -73,6 +81,6 @@ public class Money {
 
     @Override
     public String toString() {
-        return value.setScale(2, RoundingMode.HALF_UP).toString();
+        return String.valueOf((long)((value / (double) MULTIPLIER + 0.005) * 100) / 100.0);
     }
 }
