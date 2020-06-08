@@ -11,8 +11,8 @@ import java.util.Collection;
 @RunWith(Parameterized.class)
 public class MoneyTest {
 
-    private Money a;
-    private Money b;
+    private double a;
+    private double b;
     private char operation;
     private String expected;
 
@@ -36,7 +36,7 @@ public class MoneyTest {
             {1.5, 1.5, '*', "2.25"},
             {1.05, 1.05, '*', "1.1"},
             {1.005, 1.005, '*', "1.01"},
-            {1.0005, 1.0005, '*', "1"},
+            {1.0005, 1.0005, '*', "1.0"},
             {1, 1, '/', "1.0"},
             {2, 1, '/', "2.0"},
             {2, 2, '/', "1.0"},
@@ -46,15 +46,15 @@ public class MoneyTest {
             {1.05, 0.05, '/', "21.0"},
             {1.005, 0.005, '/', "201.0"},
             {1.0005, 0.0005, '/', "2001.0"},
-            //{0, 0, '^', "1"},
-            //{1, 0, '^', "1"},
-            //{2, 2, '^', "4"}
+            {0, 0, '^', "1.0"},
+            {1, 0, '^', "1.0"},
+            {2, 2, '^', "4.0"}
         });
     }
 
     public MoneyTest(double a, double b, char operation, String expected) {
-        this.a = new Money(a);
-        this.b = new Money(b);
+        this.a = a;
+        this.b = b;
         this.operation = operation;
         this.expected = expected;
     }
@@ -62,11 +62,11 @@ public class MoneyTest {
     @Test
     public void testMoneyArithmeticOperations_valid() {
         switch (operation) {
-            case '+': Assert.assertEquals(this.expected, a.add(b).toString()); break;
-            case '-': Assert.assertEquals(this.expected, a.sub(b).toString()); break;
-            case '*': Assert.assertEquals(this.expected, a.mul(b).toString()); break;
-            case '/': Assert.assertEquals(this.expected, a.div(b).toString()); break;
-            //case '^': Assert.assertEquals(this.expected, a.pow(b).toString()); break;
+            case '+': Assert.assertEquals(this.expected, new Money(a).add(new Money(b)).toString()); break;
+            case '-': Assert.assertEquals(this.expected, new Money(a).sub(new Money(b)).toString()); break;
+            case '*': Assert.assertEquals(this.expected, new Money(a).mul(new Money(b)).toString()); break;
+            case '/': Assert.assertEquals(this.expected, new Money(a).div(new Money(b)).toString()); break;
+            case '^': Assert.assertEquals(this.expected, new Money(a).pow((int) b).toString()); break;
         }
     }
 }
