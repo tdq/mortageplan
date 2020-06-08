@@ -49,9 +49,22 @@ public final class Money {
         return new Money(this.value / value.value);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Money)) return false;
+        Money money = (Money) o;
+        return Double.compare(money.value, value) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(value);
+    }
+
     @NonNull
     Money pow(int n) {
-        long result = 1;
+        double result = 1.0;
 
         for(int i = 0; i < n; ++i) {
             result *= value;
