@@ -3,19 +3,23 @@ package org.nikolay.mortageplan.money;
 import org.springframework.lang.NonNull;
 import java.util.Objects;
 
+/**
+ * Calculates fixed payments for customers of their loans
+ */
 public class FixedPaymentCalculator {
 
     private static final int MINIMUM_PAYMENTS_AMOUNT = 1;
 
     /**
+     * Calculate customer loan fixed payments
      *
-     * @param totalLoan
-     * @param numberOfPayments
-     * @param interestPerPayment
+     * @param totalLoan total customer loan
+     * @param numberOfPayments amount of payments customer should make
+     * @param interestPerPayment interest payed per each payment
      *
      * @throws IllegalArgumentException if number of payments is not allowed
      *
-     * @return
+     * @return {@link Money} represents customer fixed payment for his loan per payment period
      */
     @NonNull
     public static Money calculateFixedPayment(@NonNull final Money totalLoan, int numberOfPayments, @NonNull final Money interestPerPayment) {

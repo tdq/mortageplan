@@ -5,18 +5,22 @@ import org.springframework.lang.NonNull;
 
 import java.util.Objects;
 
+/**
+ * Describes information about customer loan
+ */
 public class ProspectDTO {
-    private String customer;
+    private String customer = "";
     private Money totalLoan = Money.ZERO;
     private double interest;
     private int years;
 
+    @NonNull
     public String getCustomer() {
         return customer;
     }
 
-    public void setCustomer(String customer) {
-        this.customer = customer;
+    public void setCustomer(@NonNull String customer) {
+        this.customer = Objects.requireNonNull(customer);
     }
 
     @NonNull

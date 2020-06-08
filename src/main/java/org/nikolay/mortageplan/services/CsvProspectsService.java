@@ -5,15 +5,18 @@ import org.nikolay.mortageplan.model.ProspectDTO;
 import org.nikolay.mortageplan.money.Money;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
-import org.springframework.stereotype.Service;
 
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
+/**
+ * CSV file based prospects service
+ */
 class CsvProspectsService implements ProspectsService {
 
     private static final int REQUIRED_AMOUNT_OF_CELLS = 4;
@@ -26,6 +29,11 @@ class CsvProspectsService implements ProspectsService {
 
     private final String prospectsFileName;
 
+    /**
+     * Create instance of CSV based prospects service
+     *
+     * @param prospectsFileName file name of file with prospects in csv format
+     */
     CsvProspectsService(@NonNull String prospectsFileName) {
         this.prospectsFileName = Objects.requireNonNull(prospectsFileName);
     }
@@ -55,17 +63,8 @@ class CsvProspectsService implements ProspectsService {
                     } catch (NumberFormatException e) {
                         throw new IllegalStateException("Format of number is wrong: " + Arrays.toString(row), e);
                     }
-                }).filter(Objects::nonNull)
+                })
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
-    }
-
-    @NonNull
-    @Override
-    public Optional<ProspectDTO> findProspectByCustomer(@NonNull String customer) throws IOException {
-        Objects.requireNonNull(customer);
-
-        return getAllProspects().stream()
-                .filter(dto -> customer.equals(dto.getCustomer()))
-                .findFirst();
     }
 }
