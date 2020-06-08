@@ -75,6 +75,10 @@ public final class Money {
 
     @Override
     public String toString() {
-        return String.valueOf((long)(value * 100 + 0.5) / 100.0);
+        return String.valueOf(round(value));
+    }
+
+    private static double round(double value) {
+        return (long)(value * 100 + 0.5) / 100.0;
     }
 }
